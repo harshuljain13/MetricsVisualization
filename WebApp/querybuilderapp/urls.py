@@ -4,4 +4,6 @@ from querybuilderapp import views
 
 urlpatterns = [
     path('', views.home, name='qbhome',),
+    url('^getschemadetails$', views.get_schema_details, name='getschemadetails'),
+
 ]

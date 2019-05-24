@@ -7,7 +7,6 @@
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js"></script>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/jquery.query-builder/2.3.3/css/query-builder.default.min.css">
 		<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css">
-		<link rel="stylesheet" href="{% static 'querybuilderapp/style.css' %}">
 		<title>QueryBuilder</title>
 
 		<style>
@@ -21,31 +20,44 @@
 		<h1>Django-QueryBuilder</h1>
 		<span id="forkongithub"><a href="https://github.com/harshul1610/MetricsVisualization">Fork me on GitHub</a></span>
 		
+
 		<div style="padding-top: 50px; margin:50px;">
-			<form>
-				<div class="dropdown">
-						<button class="btn btn-default dropdown-toggle" type="button" id="dbtable" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
-							Table Name
-							<span class="caret"></span>
+				<!-- DB Table -->
+				<label>Table: </label>
+				<div id="dbtable" class="dropdown">
+						<button class="btn btn-default dropdown-toggle" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
+							--------------
+						<span class="caret"></span>
 						</button>
 						<ul class="dropdown-menu" aria-labelledby="dbtable">
-							<li><a href="#">snow_jira_data</a></li>
-							<li><a href="#">snow_incidents_view</a></li>
-							<li role="separator" class="divider"></li>
-							<li><a href="#">Separated link</a></li>
+							{% for table in tables %}
+							<li><a href="#">{{table}}</a></li>
+							{% endfor %}
 						</ul>
-					</div>
+				</div>
+		
+				<!-- DB Columns -->
+				<label>Columns: </label>
+				<div id="tablecolumns" class="dropdown">
+						<button class="btn btn-default dropdown-toggle" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
+							--------------
+						<span class="caret"></span>
+						</button>
+						<ul class="dropdown-menu" aria-labelledby="tablecolumns">
+							{% for column in model_attr %}
+							<li><a href="#">{{column}}</a></li>
+							{% endfor %}
+						</ul>
+				</div>
 
-
-				<div id="builder"></div>
+				<div style="margin-top: 10px;" id="builder"></div>
 				<button class="btn btn-success" id="btn-set">Set Rules</button>
 				<button class="btn btn-primary" id="btn-get">Get Rules</button>
 				<button class="btn btn-warning" id="btn-reset">Reset</button>
-			</form>
 		</div>
 
 		<script>
-				var rules_basic = {
+			/*var rules_basic = {
 			condition: 'AND',
 			rules: [{
 				id: 'price',
@@ -63,8 +75,32 @@
 					value: 1
 				}]
 			}]
-		};
+		};*/
 
+		// handling table dropdown
+		$("#dbtable li a").click(function(){
+			$(this).parents("#dbtable").find('.btn').html($(this).text() + ' <span class="caret"></span>');
+			$(this).parents(".dbtable").find('.btn').val($(this).data('value'));
+			var table_name = $(this).text();
+
+					// ajax for getting the column names.
+					$.ajax({
+						url: 'getschemadetails',
+						type: "POST",
+						dataType: "json",
+						data: {
+							'table_name': table_name,
+							'csrfmiddlewaretoken': '{{ csrf_token }}'
+						},
+						success: function (result) {
+							console.log(result);
+						}
+					});
+
+			});
+
+
+		// handling the querybuilder
     $('#builder').queryBuilder({
 	  plugins: ['bt-tooltip-errors'],
 	  
@@ -114,9 +150,10 @@
 	      format: /^.{4}-.{4}-.{4}$/
 	    }
 	  }],
-	  rules: rules_basic
+	  
 	});
-    /****************************************************************
+
+ /****************************************************************
     						Triggers and Changers QueryBuilder
  *****************************************************************/
 
