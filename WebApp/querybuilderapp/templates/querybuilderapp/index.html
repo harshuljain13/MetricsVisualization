@@ -5,54 +5,65 @@
     <script src="https://code.jquery.com/jquery-2.2.4.min.js"></script>
     <script src="https://cdn.jsdelivr.net/jquery.query-builder/2.3.3/js/query-builder.standalone.min.js"></script>
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js"></script>
-    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/jquery.query-builder/2.3.3/css/query-builder.default.min.css">
+		<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css">
 		<link rel="stylesheet" href="{% static 'querybuilderapp/style.css' %}">
 		<title>QueryBuilder</title>
 
 		<style>
-			.heading {
-				font-family: inherit; margin-top: 30px; margin-bottom: 30px; text-align: center;
-			}
-
-			.box {
-				border: 2px solid black;
-				margin: 50px;
-				position: absolute;
-			}
-		</style>
+			h1 { color: #111; font-size: 80px; font-family: 'Helvetica Neue', 'sans-serif'; font-weight: bold; letter-spacing: -1px; line-height: 1; text-align: center; }
+			#forkongithub a{background:green;color:#fff;text-decoration:none;font-family:inherit,sans-serif;text-align:center;font-weight:bold;padding:5px 40px;font-size:1rem;line-height:2rem;position:relative;transition:0.5s;}#forkongithub a:hover{background:#0b6623;color:#fff;}#forkongithub a::before,#forkongithub a::after{content:"";width:100%;display:block;position:absolute;top:1px;left:0;height:1px;background:#fff;}#forkongithub a::after{bottom:1px;top:auto;}@media screen and (min-width:800px){#forkongithub{position:absolute;display:block;top:0;right:0;width:200px;overflow:hidden;height:200px;z-index:9999;}#forkongithub a{width:200px;position:absolute;top:40px;right:-50px;transform:rotate(45deg);-webkit-transform:rotate(45deg);-ms-transform:rotate(45deg);-moz-transform:rotate(45deg);-o-transform:rotate(45deg);box-shadow:4px 4px 10px rgba(0,0,0,0.8);}}
+			
+			</style>
 </head>
 
 <body>
-	<h1 class="heading">QueryBuilder</h1>
-	<div class="box">
+		<h1>Django-QueryBuilder</h1>
+		<span id="forkongithub"><a href="https://github.com/harshul1610/MetricsVisualization">Fork me on GitHub</a></span>
+		
+		<div style="padding-top: 50px; margin:50px;">
+			<form>
+				<div class="dropdown">
+						<button class="btn btn-default dropdown-toggle" type="button" id="dbtable" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
+							Table Name
+							<span class="caret"></span>
+						</button>
+						<ul class="dropdown-menu" aria-labelledby="dbtable">
+							<li><a href="#">snow_jira_data</a></li>
+							<li><a href="#">snow_incidents_view</a></li>
+							<li role="separator" class="divider"></li>
+							<li><a href="#">Separated link</a></li>
+						</ul>
+					</div>
 
-	</div>
-  <!--<div id="builder"></div>
-  <button class="btn btn-success" id="btn-set">Set Rules</button>
-  <button class="btn btn-primary" id="btn-get">Get Rules</button>
-  <button class="btn btn-warning" id="btn-reset">Reset</button>-->
 
-  <script>
-      var rules_basic = {
-	  condition: 'AND',
-	  rules: [{
-	    id: 'price',
-	    operator: 'less',
-	    value: 10.25
-	  }, {
-	    condition: 'OR',
-	    rules: [{
-	      id: 'category',
-	      operator: 'equal',
-	      value: 2
-	    }, {
-	      id: 'category',
-	      operator: 'equal',
-	      value: 1
-	    }]
-	  }]
-	};
+				<div id="builder"></div>
+				<button class="btn btn-success" id="btn-set">Set Rules</button>
+				<button class="btn btn-primary" id="btn-get">Get Rules</button>
+				<button class="btn btn-warning" id="btn-reset">Reset</button>
+			</form>
+		</div>
+
+		<script>
+				var rules_basic = {
+			condition: 'AND',
+			rules: [{
+				id: 'price',
+				operator: 'less',
+				value: 10.25
+			}, {
+				condition: 'OR',
+				rules: [{
+					id: 'category',
+					operator: 'equal',
+					value: 2
+				}, {
+					id: 'category',
+					operator: 'equal',
+					value: 1
+				}]
+			}]
+		};
 
     $('#builder').queryBuilder({
 	  plugins: ['bt-tooltip-errors'],
