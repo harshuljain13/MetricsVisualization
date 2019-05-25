@@ -23,4 +23,4 @@ def get_schema_details(request):
     model_str = request.POST.get('table_name', None)
     model_class = models_dict[model_str]
     model_attr = get_model_fields(model_class)
-    return JsonResponse({'model_attr': model_attr})
+    return JsonResponse(model_attr, safe=False)

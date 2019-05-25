@@ -4,9 +4,12 @@
 <head>
     <script src="https://code.jquery.com/jquery-2.2.4.min.js"></script>
     <script src="https://cdn.jsdelivr.net/jquery.query-builder/2.3.3/js/query-builder.standalone.min.js"></script>
-    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js"></script>
+		<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js"></script>
+		<script src="https://unpkg.com/multiple-select@1.3.1/dist/multiple-select.min.js"></script>
+		
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/jquery.query-builder/2.3.3/css/query-builder.default.min.css">
 		<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css">
+		<link rel="stylesheet" href="https://unpkg.com/multiple-select@1.3.1/dist/multiple-select.min.css">
 		<title>QueryBuilder</title>
 
 		<style>
@@ -35,20 +38,15 @@
 							{% endfor %}
 						</ul>
 				</div>
-		
-				<!-- DB Columns -->
+				
+				<!-- Table Columns -->
 				<label>Columns: </label>
-				<div id="tablecolumns" class="dropdown">
-						<button class="btn btn-default dropdown-toggle" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
-							--------------
-						<span class="caret"></span>
-						</button>
-						<ul class="dropdown-menu" aria-labelledby="tablecolumns">
-							{% for column in model_attr %}
-							<li><a href="#">{{column}}</a></li>
-							{% endfor %}
-						</ul>
+				<div id="tablecolumns">
+					<select multiple="multiple" name="tablecolumns" id="tablecolumnslist" style="width: 500px;">
+					</select>
 				</div>
+				
+				
 
 				<div style="margin-top: 10px;" id="builder"></div>
 				<button class="btn btn-success" id="btn-set">Set Rules</button>
@@ -57,30 +55,12 @@
 		</div>
 
 		<script>
-			/*var rules_basic = {
-			condition: 'AND',
-			rules: [{
-				id: 'price',
-				operator: 'less',
-				value: 10.25
-			}, {
-				condition: 'OR',
-				rules: [{
-					id: 'category',
-					operator: 'equal',
-					value: 2
-				}, {
-					id: 'category',
-					operator: 'equal',
-					value: 1
-				}]
-			}]
-		};*/
+			$('#tablecolumnslist').multipleSelect();
 
 		// handling table dropdown
 		$("#dbtable li a").click(function(){
 			$(this).parents("#dbtable").find('.btn').html($(this).text() + ' <span class="caret"></span>');
-			$(this).parents(".dbtable").find('.btn').val($(this).data('value'));
+			$(this).parents("#dbtable").find('.btn').val($(this).data('value'));
 			var table_name = $(this).text();
 
 					// ajax for getting the column names.
@@ -93,6 +73,17 @@
 							'csrfmiddlewaretoken': '{{ csrf_token }}'
 						},
 						success: function (result) {
+							var list = document.getElementById("tablecolumnslist");
+							list.innerHTML='';
+							for (var i = 0; i < result.length; i++){                
+									var opt = result[i];  
+									var option = document.createElement("option");
+									option.value = opt;           
+									var text = document.createTextNode(opt);
+									option.appendChild(text);
+									list.appendChild(option);
+								};
+							$('#tablecolumnslist').multipleSelect();
 							console.log(result);
 						}
 					});
