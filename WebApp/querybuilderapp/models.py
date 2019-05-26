@@ -8,31 +8,19 @@
 from django.db import models
 
 
-class InfosysPricing(models.Model):
-    date = models.TextField(db_column='Date', blank=True, null=True)  # Field name made lowercase.
-    open_price = models.TextField(db_column='Open Price', blank=True, null=True)  # Field name made lowercase. Field renamed to remove unsuitable characters.
-    high_price = models.TextField(db_column='High Price', blank=True, null=True)  # Field name made lowercase. Field renamed to remove unsuitable characters.
-    low_price = models.TextField(db_column='Low Price', blank=True, null=True)  # Field name made lowercase. Field renamed to remove unsuitable characters.
-    last_traded_price = models.TextField(db_column='Last Traded Price', blank=True, null=True)  # Field name made lowercase. Field renamed to remove unsuitable characters.
-    close_price = models.TextField(db_column='Close Price', blank=True, null=True)  # Field name made lowercase. Field renamed to remove unsuitable characters.
-    total_traded_quantity = models.TextField(db_column='Total Traded Quantity', blank=True, null=True)  # Field name made lowercase. Field renamed to remove unsuitable characters.
-    turnover_in_lakhs_field = models.TextField(db_column='Turnover (in Lakhs)', blank=True, null=True)  # Field name made lowercase. Field renamed to remove unsuitable characters. Field renamed because it ended with '_'.
-
+class vizpoc(models.Model):
+    UtilityName = models.TextField(db_column='UtilityName')  # Field name made lowercase.
+    StateName = models.TextField(db_column='StateName')  # Field name made lowercase.
+    CountyName = models.TextField(db_column='CountyName')  # Field name made lowercase.
+    OutageCount = models.IntegerField(db_column='OutageCount', blank=True, null=True)  # Field name made lowercase. Field renamed to remove unsuitable characters.
+    CustomerCount = models.IntegerField(db_column='CustomerCount', blank=True, null=True)  # Field name made lowercase. Field renamed to remove unsuitable characters.
+    RecordDateTime = models.DateTimeField(db_column='RecordDateTime')  # Field name made lowercase. Field renamed to remove unsuitable characters.
+    StepCount = models.IntegerField(db_column='StepCount', blank=True, null=True)  # Field name made lowercase. Field renamed to remove unsuitable characters.
+    PerDiff = models.FloatField(db_column='PerDiff', blank=True, null=True)  # Field name made lowercase. Field renamed to remove unsuitable characters.
+    Duration = models.FloatField(db_column='Duration', blank=True, null=True)  # Field name made lowercase. Field renamed to remove unsuitable characters.
+    
     class Meta:
-        managed = False
-        db_table = 'infosys_pricing'
-
-
-class ReliancePricing(models.Model):
-    date = models.TextField(db_column='Date', blank=True, null=True)  # Field name made lowercase.
-    open_price = models.TextField(db_column='Open Price', blank=True, null=True)  # Field name made lowercase. Field renamed to remove unsuitable characters.
-    high_price = models.TextField(db_column='High Price', blank=True, null=True)  # Field name made lowercase. Field renamed to remove unsuitable characters.
-    low_price = models.TextField(db_column='Low Price', blank=True, null=True)  # Field name made lowercase. Field renamed to remove unsuitable characters.
-    last_traded_price = models.TextField(db_column='Last Traded Price', blank=True, null=True)  # Field name made lowercase. Field renamed to remove unsuitable characters.
-    close_price = models.TextField(db_column='Close Price', blank=True, null=True)  # Field name made lowercase. Field renamed to remove unsuitable characters.
-    total_traded_quantity = models.TextField(db_column='Total Traded Quantity', blank=True, null=True)  # Field name made lowercase. Field renamed to remove unsuitable characters.
-    turnover_in_lakhs_field = models.TextField(db_column='Turnover (in Lakhs)', blank=True, null=True)  # Field name made lowercase. Field renamed to remove unsuitable characters. Field renamed because it ended with '_'.
-
-    class Meta:
-        managed = False
-        db_table = 'reliance_pricing'
+        unique_together = (('UtilityName', 'StateName', 'CountyName', 'RecordDateTime'))
+        managed = True
+        db_table = 'vizpoc'
+        
