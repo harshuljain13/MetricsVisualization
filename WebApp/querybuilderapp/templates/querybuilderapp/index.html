@@ -112,7 +112,7 @@
 							var list = document.getElementById("tablecolumnslist");
 							list.innerHTML='';
 							for (var i = 0; i < result.length; i++){                
-									var opt = result[i];  
+									var opt = result[i][0];
 									var option = document.createElement("option");
 									option.value = opt;           
 									var text = document.createTextNode(opt);
@@ -123,12 +123,20 @@
 
 							//populate the filter paramters
 							var filters_= [];
+							var field_map = {
+								'AutoField': 'integer',
+								'TextField': 'string',
+								'FloatField': 'double',
+								'IntegerField': 'integer',
+								'DateTimeField': 'datetime',
+							}
 							for (var i = 0; i < result.length; i++){                
-									var opt = result[i];
+									var col = result[i][0];
+									var col_type = field_map[result[i][1]];
 									var filter_ = {
-										id: opt,
-										label: opt,
-										type: 'string'
+										id: col,
+										label: col,
+										type: col_type,
 									}
 									filters_.push(filter_)
 								};
