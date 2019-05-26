@@ -26,37 +26,72 @@
 
 		<div style="padding-top: 50px; margin:50px;">
 				<!-- DB Table -->
-				<label>Table: </label>
-				<div id="dbtable" class="dropdown">
-						<button class="btn btn-default dropdown-toggle" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
-							--------------
-						<span class="caret"></span>
-						</button>
-						<ul class="dropdown-menu" aria-labelledby="dbtable">
-							{% for table in tables %}
-							<li><a href="#">{{table}}</a></li>
-							{% endfor %}
-						</ul>
-				</div>
-				
-				<!-- Table Columns -->
-				<label>Columns: </label>
-				<div id="tablecolumns">
-					<select multiple="multiple" name="tablecolumns" id="tablecolumnslist" style="width: 500px;">
-					</select>
-				</div>
-				
-				
+				<div class="row">
+							<div class="col-sm-3">
+									<label>Table: </label>
+									<div id="dbtable" class="dropdown">
+											
+											<button class="btn btn-default dropdown-toggle" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
+												Select Table
+											<span class="caret"></span>
+											</button>
+											<ul class="dropdown-menu" aria-labelledby="dbtable">
+												{% for table in tables %}
+												<li><a href="#">{{table}}</a></li>
+												{% endfor %}
+											</ul>
+									</div>
+							</div>
 
-				<div style="margin-top: 10px;" id="builder"></div>
-				<button class="btn btn-success" id="btn-set">Set Rules</button>
-				<button class="btn btn-primary" id="btn-get">Get Rules</button>
-				<button class="btn btn-warning" id="btn-reset">Reset</button>
+							<div class="col-sm-3">
+								<!-- Aggregation input -->
+								<label>Aggregation: </label>
+								<div id="aggregationtype" class="dropdown">
+												
+									<button class="btn btn-default dropdown-toggle" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
+												Select Aggregation
+												<span class="caret"></span>
+												</button>
+												<ul class="dropdown-menu" aria-labelledby="aggregationtype">
+													<li><a href="#">None</a></li>
+													<li><a href="#">Sum</a></li>
+													<li><a href="#">Count</a></li>
+												</ul>
+								</div>
+							</div>
+
+							<!-- Table Columns -->
+							<div class="col-sm-3">
+								<label id="columnslabel" >Columns:</label>
+								<div id="tablecolumns">
+									<select multiple="multiple" name="tablecolumns" id="tablecolumnslist" style="width: 200px;">
+									</select>
+								</div>
+							</div>
+							
+
+						</div>
+
+					<div class="row">
+						<div class="col">
+							<div style="margin: 15px;" id="builder"></div>
+						</div>
+					</div>
+
+					<div id="querybuilderbuttons" style="display:none;" class="row">
+						  <div style="margin-left:15px">
+								<button class="btn btn-success" id="btn-set">Set Rules</button>
+								<button class="btn btn-primary" id="btn-get">Get Rules</button>
+								<button class="btn btn-warning" id="btn-reset">Reset</button>
+						  </div>
+					</div>
+				
+				</div>
 		</div>
 
 		<script>
-			$('#tablecolumnslist').multipleSelect();
-
+		$('#tablecolumnslist').multipleSelect();
+		
 		// handling table dropdown
 		$("#dbtable li a").click(function(){
 			$(this).parents("#dbtable").find('.btn').html($(this).text() + ' <span class="caret"></span>');
@@ -73,6 +108,7 @@
 							'csrfmiddlewaretoken': '{{ csrf_token }}'
 						},
 						success: function (result) {
+							// populate the columns list
 							var list = document.getElementById("tablecolumnslist");
 							list.innerHTML='';
 							for (var i = 0; i < result.length; i++){                
@@ -84,18 +120,50 @@
 									list.appendChild(option);
 								};
 							$('#tablecolumnslist').multipleSelect();
-							console.log(result);
+
+							//populate the filter paramters
+							var filters_= [];
+							for (var i = 0; i < result.length; i++){                
+									var opt = result[i];
+									var filter_ = {
+										id: opt,
+										label: opt,
+										type: 'string'
+									}
+									filters_.push(filter_)
+								};
+							// handling the querybuilder
+							$('#builder').queryBuilder({
+							plugins: ['bt-tooltip-errors'],
+							filters: filters_
+							});
+							$('#querybuilderbuttons').css('display', 'block');
+
 						}
 					});
 
 			});
 
+		// handling aggregation dropdown
+		$("#aggregationtype li a").click(function(){
+			$(this).parents("#aggregationtype").find('.btn').html($(this).text() + ' <span class="caret"></span>');
+			$(this).parents("#aggregationtype").find('.btn').val($(this).data('value'));
+			var aggregation_type = $(this).text();
+			
+			// handle columns based on aggregation
+			if (aggregation_type === "None") {
+				var columns_div = document.getElementById("columnslabel");
+				columns_div.innerHTML = "X axis, Yaxis:";
+			}
+			else {
+				var columns_div = document.getElementById("columnslabel");
+				columns_div.innerHTML = "Groupby Columns:";
+			}
+			console.log(aggregation_type);
+		});
 
-		// handling the querybuilder
-    $('#builder').queryBuilder({
-	  plugins: ['bt-tooltip-errors'],
-	  
-	  filters: [{
+		
+	  /*filters: [{
 	    id: 'name',
 	    label: 'Name',
 	    type: 'string'
@@ -140,9 +208,7 @@
 	    validation: {
 	      format: /^.{4}-.{4}-.{4}$/
 	    }
-	  }],
-	  
-	});
+	  }],*/
 
  /****************************************************************
     						Triggers and Changers QueryBuilder
@@ -150,13 +216,15 @@
 
 	$('#btn-get').on('click', function() {
 	  var result = $('#builder').queryBuilder('getRules');
-	  if (!$.isEmptyObject(result)) {
+		alert(JSON.stringify(result, null, 2));
+	  /*if (!$.isEmptyObject(result)) {
 	    alert(JSON.stringify(result, null, 2));
 	  }
 	  else{
 	  	console.log("invalid object :");
 	  }
 	  console.log(result);
+		*/
 	});
 
 	$('#btn-reset').on('click', function() {
