@@ -83,6 +83,7 @@
 								<button class="btn btn-success" id="btn-set">Set Rules</button>
 								<button class="btn btn-primary" id="btn-get">Get Rules</button>
 								<button class="btn btn-warning" id="btn-reset">Reset</button>
+								<button class="btn btn-success" id="btn-sql">Get SQL</button>
 						  </div>
 					</div>
 				
@@ -234,6 +235,12 @@
 	  console.log(result);
 		*/
 	});
+
+	$('#btn-sql').on('click', function() {
+	  var result = $('#builder').queryBuilder('getSQL');
+		alert(JSON.stringify(result, null, 2));
+	});
+
 
 	$('#btn-reset').on('click', function() {
 	  $('#builder').queryBuilder('reset');
