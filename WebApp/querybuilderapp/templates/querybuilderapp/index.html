@@ -15,8 +15,8 @@
 		<style>
 			h1 { color: #111; font-size: 80px; font-family: 'Helvetica Neue', 'sans-serif'; font-weight: bold; letter-spacing: -1px; line-height: 1; text-align: center; }
 			#forkongithub a{background:green;color:#fff;text-decoration:none;font-family:inherit,sans-serif;text-align:center;font-weight:bold;padding:5px 40px;font-size:1rem;line-height:2rem;position:relative;transition:0.5s;}#forkongithub a:hover{background:#0b6623;color:#fff;}#forkongithub a::before,#forkongithub a::after{content:"";width:100%;display:block;position:absolute;top:1px;left:0;height:1px;background:#fff;}#forkongithub a::after{bottom:1px;top:auto;}@media screen and (min-width:800px){#forkongithub{position:absolute;display:block;top:0;right:0;width:200px;overflow:hidden;height:200px;z-index:9999;}#forkongithub a{width:200px;position:absolute;top:40px;right:-50px;transform:rotate(45deg);-webkit-transform:rotate(45deg);-ms-transform:rotate(45deg);-moz-transform:rotate(45deg);-o-transform:rotate(45deg);box-shadow:4px 4px 10px rgba(0,0,0,0.8);}}
-			
-			</style>
+		</style>
+		
 </head>
 
 <body>
@@ -257,18 +257,35 @@
 		else {
 
 			var groupby_columns_list = $("#tablecolumnslist").val();
-			var groupby_columns = groupby_columns_list.join(',');
+			var columns = groupby_columns_list.join(',');
 
 			if (filter_query == '') {
-				var final_query = "select " + groupby_columns + " " + agg_type + " (*) from " + table_name + " group by " + groupby_columns;
+				var final_query = "select " + columns + ", " + agg_type + " (*) from " + table_name + " group by " + columns;
 			}
 			else {
-				var final_query = "select " + groupby_columns + " " + agg_type + " (*) from " + table_name + " where " + filter_query + " group by " + groupby_columns;
+				var final_query = "select " + columns + ", " + agg_type + " (*) from " + table_name + " where " + filter_query + " group by " + columns;
 			}
 		}
 		
 		// return sql
 		console.log(JSON.stringify(final_query, null, 2));
+
+		// call ajax
+		$.ajax({
+						url: 'get_query_data',
+						type: "POST",
+						dataType: "json",
+						data: {
+							'table_name': table_name,
+							'csrfmiddlewaretoken': '{{ csrf_token }}',
+							'sql_query': final_query,
+							'agg_type': agg_type,
+						},
+						success: function (result) {
+								console.log(result);
+						}
+						
+		});
 	});
 
 
