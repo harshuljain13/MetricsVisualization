@@ -2,14 +2,12 @@
 <!DOCTYPE html>
 
 <head>
-    <script src="https://code.jquery.com/jquery-2.2.4.min.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.0/jquery.min.js"></script>
     <script src="https://cdn.jsdelivr.net/jquery.query-builder/2.3.3/js/query-builder.standalone.min.js"></script>
-		<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js"></script>
-		<script src="https://unpkg.com/multiple-select@1.3.1/dist/multiple-select.min.js"></script>
+		<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.0/js/bootstrap.min.js"></script>
 		
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/jquery.query-builder/2.3.3/css/query-builder.default.min.css">
-		<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css">
-		<link rel="stylesheet" href="https://unpkg.com/multiple-select@1.3.1/dist/multiple-select.min.css">
+		<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.0/css/bootstrap.min.css">
 		<title>QueryBuilder</title>
 
 		<style>
@@ -62,15 +60,32 @@
 
 							<!-- Table Columns -->
 							<div class="col-sm-3">
-								<label id="columnslabel" >Columns:</label>
-								<div id="tablecolumns">
-									<select multiple="multiple" name="tablecolumns" id="tablecolumnslist" style="width: 200px;">
-									</select>
+								<label>XAxis:</label>
+								<div id="xaxistype" class="dropdown">
+
+									<button class="btn btn-default dropdown-toggle" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
+										
+										<span class="caret"></span>
+										</button>
+										<ul id="xaxislist" class="dropdown-menu">
+												<li><a href="#">Count</a></li>
+										</ul>
 								</div>
 							</div>
-							
 
-						</div>
+							<!-- Table Columns -->
+							<div class="col-sm-3">
+								<label>YAxis:</label>
+								<div id="yaxistype" class="dropdown">
+									<button class="btn btn-default dropdown-toggle" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
+										Select Column
+										<span class="caret"></span>
+										</button>
+										<ul id="yaxislist" class="dropdown-menu">
+										</ul>
+								</div>
+							</div>
+					</div>
 
 					<div class="row">
 						<div class="col">
@@ -91,8 +106,9 @@
 		</div>
 
 		<script>
-		$('#tablecolumnslist').multipleSelect();
-		
+
+	
+
 		// handling table dropdown
 		$("#dbtable li a").click(function(){
 			$(this).parents("#dbtable").find('.btn').html($(this).text() + ' <span class="caret"></span>');
@@ -108,20 +124,26 @@
 							'table_name': table_name,
 							'csrfmiddlewaretoken': '{{ csrf_token }}'
 						},
+
 						success: function (result) {
 							// populate the columns list
-							var list = document.getElementById("tablecolumnslist");
-							list.innerHTML='';
+							var list = $("#xaxislist");
+							list.innerHTML="";
 							for (var i = 0; i < result.length; i++){                
 									var opt = result[i][0];
-									var option = document.createElement("option");
-									option.value = opt;           
-									var text = document.createTextNode(opt);
-									option.appendChild(text);
-									list.appendChild(option);
+									console.log(opt);
+									$("#xaxislist").append('<li><a href="#">'+opt+'</a></li>');
 								};
-							$('#tablecolumnslist').multipleSelect();
+							console.log($('#xaxislist'));
 
+							// populate the y axis list
+							var list2 = $("#yaxislist");
+							list2.innerHTML="";
+							for (var i = 0; i < result.length; i++){                
+									var opt2 = result[i][0];
+									$("#yaxislist").append('<li><a href="#">'+opt2+'</a></li>');
+								};
+							
 							//populate the filter paramters
 							var filters_= [];
 							var field_map = {
@@ -141,25 +163,43 @@
 									}
 									filters_.push(filter_)
 								};
+								
 							// handling the querybuilder
 							$('#builder').queryBuilder({
 							plugins: ['bt-tooltip-errors'],
 							filters: filters_
 							});
 							$('#querybuilderbuttons').css('display', 'block');
-
 						}
 					});
 
 			});
+		
+		
+				// handling xaxis dropdown
+				$("#xaxistype li a").click(function(){
+			console.log('hello');
+			$(this).parents("#xaxistype").find('.btn').html($(this).text() + ' <span class="caret"></span>');
+			$(this).parents("#xaxistype").find('.btn').val($(this).data('value'));
+			var xaxis = $(this).text().trim();
+		});
 
+
+		// handling yaxis dropdown
+		$("#yaxistype li a").click(function(){
+			console.log('hello');
+			$(this).parents("#yaxistype").find('.btn').html($(this).text() + ' <span class="caret"></span>');
+			$(this).parents("#yaxistype").find('.btn').val($(this).data('value'));
+			var yaxis = $(this).text().trim();
+		});
+		
 		// handling aggregation dropdown
 		$("#aggregationtype li a").click(function(){
 			$(this).parents("#aggregationtype").find('.btn').html($(this).text() + ' <span class="caret"></span>');
 			$(this).parents("#aggregationtype").find('.btn').val($(this).data('value'));
 			var aggregation_type = $(this).text().trim();
 			
-			// handle columns based on aggregation
+			/* handle columns based on aggregation
 			if (aggregation_type === "None") {
 				var columns_div = document.getElementById("columnslabel");
 				columns_div.innerHTML = "X axis, Yaxis:";
@@ -168,56 +208,8 @@
 				var columns_div = document.getElementById("columnslabel");
 				columns_div.innerHTML = "Groupby Columns:";
 			}
-			console.log(aggregation_type);
+			console.log(aggregation_type);*/
 		});
-
-		
-	  /*filters: [{
-	    id: 'name',
-	    label: 'Name',
-	    type: 'string'
-	  }, {
-	    id: 'category',
-	    label: 'Category',
-	    type: 'integer',
-	    input: 'select',
-	    values: {
-	      1: 'Books',
-	      2: 'Movies',
-	      3: 'Music',
-	      4: 'Tools',
-	      5: 'Goodies',
-	      6: 'Clothes'
-	    },
-	    operators: ['equal', 'not_equal', 'in', 'not_in', 'is_null', 'is_not_null']
-	  }, {
-	    id: 'in_stock',
-	    label: 'In stock',
-	    type: 'integer',
-	    input: 'radio',
-	    values: {
-	      1: 'Yes',
-	      0: 'No'
-	    },
-	    operators: ['equal']
-	  }, {
-	    id: 'price',
-	    label: 'Price',
-	    type: 'double',
-	    validation: {
-	      min: 0,
-	      step: 0.01
-	    }
-	  }, {
-	    id: 'id',
-	    label: 'Identifier',
-	    type: 'string',
-	    placeholder: '____-____-____',
-	    operators: ['equal', 'not_equal'],
-	    validation: {
-	      format: /^.{4}-.{4}-.{4}$/
-	    }
-	  }],*/
 
  /****************************************************************
     						Triggers and Changers QueryBuilder
