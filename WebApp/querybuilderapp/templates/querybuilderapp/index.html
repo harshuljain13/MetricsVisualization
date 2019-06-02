@@ -64,11 +64,10 @@
 								<div id="xaxistype" class="dropdown">
 
 									<button class="btn btn-default dropdown-toggle" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
-										
+										Select Column
 										<span class="caret"></span>
 										</button>
 										<ul id="xaxislist" class="dropdown-menu">
-												<li><a href="#">Count</a></li>
 										</ul>
 								</div>
 							</div>
@@ -131,10 +130,8 @@
 							list.innerHTML="";
 							for (var i = 0; i < result.length; i++){                
 									var opt = result[i][0];
-									console.log(opt);
 									$("#xaxislist").append('<li><a href="#">'+opt+'</a></li>');
 								};
-							console.log($('#xaxislist'));
 
 							// populate the y axis list
 							var list2 = $("#yaxislist");
@@ -176,9 +173,8 @@
 			});
 		
 		
-				// handling xaxis dropdown
-				$("#xaxistype li a").click(function(){
-			console.log('hello');
+		// handling xaxis dropdown
+		$(document).on('click', "#xaxistype li a", function(){
 			$(this).parents("#xaxistype").find('.btn').html($(this).text() + ' <span class="caret"></span>');
 			$(this).parents("#xaxistype").find('.btn').val($(this).data('value'));
 			var xaxis = $(this).text().trim();
@@ -186,8 +182,7 @@
 
 
 		// handling yaxis dropdown
-		$("#yaxistype li a").click(function(){
-			console.log('hello');
+		$(document).on('click', "#yaxistype li a", function(){
 			$(this).parents("#yaxistype").find('.btn').html($(this).text() + ' <span class="caret"></span>');
 			$(this).parents("#yaxistype").find('.btn').val($(this).data('value'));
 			var yaxis = $(this).text().trim();
@@ -234,28 +229,25 @@
 		// construct sql
 		var table_name = $("#dbtable").find('.btn').text().trim();
 		var agg_type = $("#aggregationtype").find('.btn').text().trim();
+		var xaxiscolumn = $("#xaxistype").find('.btn').text().trim();
+		var yaxiscolumn = $("#yaxistype").find('.btn').text().trim();
 
 		if (agg_type=="None") {
-			var columns_list = $("#tablecolumnslist").val();
-			var columns = columns_list.join(',');
+			
 
 			if (filter_query == '') {
-				var final_query = "select " + columns + " from " + table_name;
+				var final_query = `select ${xaxiscolumn},${yaxiscolumn} from ${table_name}`;
 			}
 			else {
-				var final_query = "select " + columns + " from " + table_name + " where " + filter_query;
+				var final_query = `select ${xaxiscolumn},${yaxiscolumn} from ${table_name} where ${filter_query}`;
 			}
 		}
 		else {
-
-			var groupby_columns_list = $("#tablecolumnslist").val();
-			var columns = groupby_columns_list.join(',');
-
 			if (filter_query == '') {
-				var final_query = "select " + columns + ", " + agg_type + " (*) from " + table_name + " group by " + columns;
+				var final_query = `select ${xaxiscolumn},${agg_type}(${yaxiscolumn}) from ${table_name} group by ${yaxiscolumn}`;
 			}
 			else {
-				var final_query = "select " + columns + ", " + agg_type + " (*) from " + table_name + " where " + filter_query + " group by " + columns;
+				var final_query = `select ${xaxiscolumn},${agg_type}(${yaxiscolumn}) from ${table_name} where ${filter_query} group by ${yaxiscolumn}`;
 			}
 		}
 		
