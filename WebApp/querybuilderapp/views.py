@@ -37,16 +37,11 @@ def get_query_data(request):
     model_class = models_dict[model_str]
     model_attr = get_model_fields(model_class)
     print(model_attr)
-    parse_dates = {}
-    for column, column_type in model_attr:
-        if column_type == 'DateTimeField':
-            parse_dates[column] = {'format': '%d/%m/%y %H:%M'}
 
-    print(parse_dates)
+    print(model_class.objects.all())
+    #df = pd.read_sql_query(sql_query, connection)
 
-    df = pd.read_sql_query(sql_query, connection, parse_dates=['RecordDateTime'])
-
-    print(df.dtypes)
+    print(df)
 
     return JsonResponse(model_attr, safe=False)
 

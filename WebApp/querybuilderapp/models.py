@@ -6,21 +6,23 @@
 #   * Remove `managed = False` lines if you wish to allow Django to create, modify, and delete the table
 # Feel free to rename the models, but don't rename db_table values or field names.
 from django.db import models
+from .utils import MyModelDateField
 
-
-class vizpoc(models.Model):
-    UtilityName = models.TextField(db_column='UtilityName')  # Field name made lowercase.
-    StateName = models.TextField(db_column='StateName')  # Field name made lowercase.
-    CountyName = models.TextField(db_column='CountyName')  # Field name made lowercase.
-    OutageCount = models.IntegerField(db_column='OutageCount', blank=True, null=True)  # Field name made lowercase. Field renamed to remove unsuitable characters.
-    CustomerCount = models.IntegerField(db_column='CustomerCount', blank=True, null=True)  # Field name made lowercase. Field renamed to remove unsuitable characters.
-    RecordDateTime = models.DateTimeField(db_column='RecordDateTime')  # Field name made lowercase. Field renamed to remove unsuitable characters.
-    StepCount = models.IntegerField(db_column='StepCount', blank=True, null=True)  # Field name made lowercase. Field renamed to remove unsuitable characters.
-    PerDiff = models.FloatField(db_column='PerDiff', blank=True, null=True)  # Field name made lowercase. Field renamed to remove unsuitable characters.
-    Duration = models.FloatField(db_column='Duration', blank=True, null=True)  # Field name made lowercase. Field renamed to remove unsuitable characters.
+class eod_hd(models.Model):
+    Date = MyModelDateField(db_column='Date', null=False)
+    Open = models.FloatField(db_column='Open', null=False)
+    High = models.FloatField(db_column='High', null=False)
+    Low = models.FloatField(db_column='Low', null=False)
+    Close = models.FloatField(db_column='Close', null=False)
+    Volume = models.FloatField(db_column='Volume', null=False)
+    Dividend = models.FloatField(db_column='Dividend', null=False)
+    Split = models.FloatField(db_column='Split', null=False)
+    AdjOpen = models.FloatField(db_column='AdjOpen', null=False)
+    AdjHigh = models.FloatField(db_column='AdjHigh', null=False)
+    AdjLow = models.FloatField(db_column='AdjLow', null=False)
+    AdjClose = models.FloatField(db_column='AdjClose', null=False)
+    AdjVolume = models.FloatField(db_column='AdjVolume', null=False)
     
     class Meta:
-        unique_together = (('UtilityName', 'StateName', 'CountyName', 'RecordDateTime'))
-        managed = True
-        db_table = 'vizpoc'
-        
+        managed=True
+        db_table = 'eod_hd'
