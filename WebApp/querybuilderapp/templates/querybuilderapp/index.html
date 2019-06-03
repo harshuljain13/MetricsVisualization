@@ -4,16 +4,19 @@
 <head>
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.0/jquery.min.js"></script>
     <script src="https://cdn.jsdelivr.net/jquery.query-builder/2.3.3/js/query-builder.standalone.min.js"></script>
-		<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.0/js/bootstrap.min.js"></script>
-		
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/jquery.query-builder/2.3.3/css/query-builder.default.min.css">
-		<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.0/css/bootstrap.min.css">
-		<title>QueryBuilder</title>
+	<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.0/js/bootstrap.min.js"></script>
+	<script src="https://code.highcharts.com/highcharts.js"></script>	
+	<script src="https://code.highcharts.com/modules/exporting.js"></script>
+	<script src="https://code.highcharts.com/modules/export-data.js"></script>
 
-		<style>
-			h1 { color: #111; font-size: 80px; font-family: 'Helvetica Neue', 'sans-serif'; font-weight: bold; letter-spacing: -1px; line-height: 1; text-align: center; }
-			#forkongithub a{background:green;color:#fff;text-decoration:none;font-family:inherit,sans-serif;text-align:center;font-weight:bold;padding:5px 40px;font-size:1rem;line-height:2rem;position:relative;transition:0.5s;}#forkongithub a:hover{background:#0b6623;color:#fff;}#forkongithub a::before,#forkongithub a::after{content:"";width:100%;display:block;position:absolute;top:1px;left:0;height:1px;background:#fff;}#forkongithub a::after{bottom:1px;top:auto;}@media screen and (min-width:800px){#forkongithub{position:absolute;display:block;top:0;right:0;width:200px;overflow:hidden;height:200px;z-index:9999;}#forkongithub a{width:200px;position:absolute;top:40px;right:-50px;transform:rotate(45deg);-webkit-transform:rotate(45deg);-ms-transform:rotate(45deg);-moz-transform:rotate(45deg);-o-transform:rotate(45deg);box-shadow:4px 4px 10px rgba(0,0,0,0.8);}}
-		</style>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/jquery.query-builder/2.3.3/css/query-builder.default.min.css">
+	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.0/css/bootstrap.min.css">
+	<title>QueryBuilder</title>
+
+	<style>
+		h1 { color: #111; font-size: 80px; font-family: 'Helvetica Neue', 'sans-serif'; font-weight: bold; letter-spacing: -1px; line-height: 1; text-align: center; }
+		#forkongithub a{background:green;color:#fff;text-decoration:none;font-family:inherit,sans-serif;text-align:center;font-weight:bold;padding:5px 40px;font-size:1rem;line-height:2rem;position:relative;transition:0.5s;}#forkongithub a:hover{background:#0b6623;color:#fff;}#forkongithub a::before,#forkongithub a::after{content:"";width:100%;display:block;position:absolute;top:1px;left:0;height:1px;background:#fff;}#forkongithub a::after{bottom:1px;top:auto;}@media screen and (min-width:800px){#forkongithub{position:absolute;display:block;top:0;right:0;width:200px;overflow:hidden;height:200px;z-index:9999;}#forkongithub a{width:200px;position:absolute;top:40px;right:-50px;transform:rotate(45deg);-webkit-transform:rotate(45deg);-ms-transform:rotate(45deg);-moz-transform:rotate(45deg);-o-transform:rotate(45deg);box-shadow:4px 4px 10px rgba(0,0,0,0.8);}}
+	</style>
 		
 </head>
 
@@ -101,8 +104,11 @@
 						  </div>
 					</div>
 				
+					<div id="container" style="min-width: 310px; height: 400px; margin: 0 auto">
+					<!-- chart -->
+					</div>
+
 				</div>
-		</div>
 
 		<script>
 
@@ -128,7 +134,7 @@
 
 							// populate the x axis list
 							var list = $("#xaxislist");
-							list.innerHTML="";
+							list.empty();
 							keys = Object.keys(result);
 							for (var i=0; i<keys.length; i++){  
 									var opt = keys[i];
@@ -137,7 +143,7 @@
 
 							// populate the y axis list
 							var list2 = $("#yaxislist");
-							list2.innerHTML="";
+							list2.empty();
 							for (var i=0; i<keys.length; i++){  
 									var opt2 = keys[i];
 									$("#yaxislist").append('<li><a href="#">'+opt2+'</a></li>');
@@ -269,8 +275,44 @@
 							'xaxiscolumn': xaxiscolumn,
 							'yaxiscolumn': yaxiscolumn
 						},
-						success: function (result) {
-								console.log(result);
+						success: function (highcharts_json) {
+								console.log(highcharts_json)
+								Highcharts.chart('container', {
+									chart: {
+										zoomType: 'x'
+									},
+									title: {
+										text: "Test"
+									},
+									xAxis: {
+										type: "datetime",
+										title: {text: highcharts_json['xlabel']}
+									},
+									yAxis: {
+										title: {text: highcharts_json['ylabel']}
+									},
+									legend: {
+										enabled: false
+									},
+									plotOptions: {
+										area: {
+											marker: {
+												radius:2
+											},
+											linewidth: 1,
+											states: {
+												hover: {
+													linewidth: 1
+												}
+											},
+											threshold:null
+										}
+									},
+									series:[{
+										name: 'test',
+										data: highcharts_json['data']
+									}]
+								});
 						}
 						
 		});

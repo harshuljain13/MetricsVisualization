@@ -55,8 +55,18 @@ def get_query_data(request):
         #convert dataframe to series
         data_df = data_df.set_index(xaxis_column)
 
-    print(data_df)
+    highcharts_json = series_to_highcharts(data_df, xaxis_column, yaxis_column)
+    print(highcharts_json)
 
-    return JsonResponse(model_fields_map, safe=False)
+    return JsonResponse(highcharts_json, safe=False)
 
 
+def series_to_highcharts(series, xaxiscol, yaxiscol):
+    series_json = json.loads(series.to_json())[yaxiscol]
+    data = [[float(key),float(value)] for key,value in series_json.items()]
+    final_json = {}
+    final_json['xlabel'] = xaxiscol
+    final_json['ylabel'] = yaxiscol
+    final_json['data'] = sorted(data, key=lambda x: x[0])
+
+    return final_json
