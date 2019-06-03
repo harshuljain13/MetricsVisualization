@@ -68,5 +68,4 @@ def series_to_highcharts(series, xaxiscol, yaxiscol):
     final_json['xlabel'] = xaxiscol
     final_json['ylabel'] = yaxiscol
     final_json['data'] = sorted(data, key=lambda x: x[0])
-
     return final_json

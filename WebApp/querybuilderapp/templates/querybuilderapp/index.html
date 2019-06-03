@@ -28,7 +28,7 @@
 		<div style="padding-top: 50px; margin:50px;">
 				<!-- DB Table -->
 				<div class="row">
-							<div class="col-sm-3">
+							<div class="col-sm-2">
 									<label>Table: </label>
 									<div id="dbtable" class="dropdown">
 											
@@ -44,7 +44,7 @@
 									</div>
 							</div>
 
-							<div class="col-sm-3">
+							<div class="col-sm-2">
 								<!-- Aggregation input -->
 								<label>Aggregation: </label>
 								<div id="aggregationtype" class="dropdown">
@@ -62,8 +62,8 @@
 							</div>
 
 							<!-- Table Columns -->
-							<div class="col-sm-3">
-								<label>XAxis:</label>
+							<div class="col-sm-2">
+								<label>X-Axis:</label>
 								<div id="xaxistype" class="dropdown">
 
 									<button class="btn btn-default dropdown-toggle" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
@@ -76,8 +76,8 @@
 							</div>
 
 							<!-- Table Columns -->
-							<div class="col-sm-3">
-								<label>YAxis:</label>
+							<div class="col-sm-2">
+								<label>Y-Axis:</label>
 								<div id="yaxistype" class="dropdown">
 									<button class="btn btn-default dropdown-toggle" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
 										Select Column
@@ -86,6 +86,32 @@
 										<ul id="yaxislist" class="dropdown-menu">
 										</ul>
 								</div>
+							</div>
+							
+							<!-- Table Columns -->
+							<div class="col-sm-2">
+									<label>Z-Axis:</label>
+									<div id="zaxistype" class="dropdown">
+										<button class="btn btn-default dropdown-toggle" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
+											Select Column
+											<span class="caret"></span>
+											</button>
+											<ul id="zaxislist" class="dropdown-menu">
+											</ul>
+									</div>
+							</div>
+
+							<!-- Graph Type -->
+							<div class="col-sm-2">
+									<label>GraphType: </label>
+									<div id="graphtype" class="dropdown">
+										<button class="btn btn-default dropdown-toggle" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
+											Select Graph
+											<span class="caret"></span>
+										</button>
+										<ul id="graphtypelist" class="dropdown-menu" aria-labelledby="aggregationtype">
+										</ul>
+									</div>
 							</div>
 					</div>
 
@@ -97,13 +123,13 @@
 
 					<div id="querybuilderbuttons" style="display:none;" class="row">
 						  <div style="margin-left:15px">
-								<button class="btn btn-success" id="btn-set">Set Rules</button>
-								<button class="btn btn-primary" id="btn-get">Get Rules</button>
+								<!--<button class="btn btn-success" id="btn-set">Set Rules</button>-->
+								<!--<button class="btn btn-primary" id="btn-get">Get Rules</button>-->
 								<button class="btn btn-warning" id="btn-reset">Reset</button>
-								<button class="btn btn-success" id="btn-sql">Get SQL</button>
+								<button class="btn btn-success" id="btn-sql">Generate Graph</button>
 						  </div>
 					</div>
-				
+					
 					<div id="container" style="min-width: 310px; height: 400px; margin: 0 auto">
 					<!-- chart -->
 					</div>
@@ -142,13 +168,22 @@
 								};
 
 							// populate the y axis list
-							var list2 = $("#yaxislist");
-							list2.empty();
+							var list = $("#yaxislist");
+							list.empty();
 							for (var i=0; i<keys.length; i++){  
-									var opt2 = keys[i];
-									$("#yaxislist").append('<li><a href="#">'+opt2+'</a></li>');
+									var opt = keys[i];
+									$("#yaxislist").append('<li><a href="#">'+opt+'</a></li>');
 								};
 							
+							// populate the z axis list
+							var list = $("#zaxislist");
+							list.empty();
+							$("#zaxislist").append('<li><a href="#">None</a></li>');
+							for (var i=0; i<keys.length; i++){  
+									var opt = keys[i];
+									$("#zaxislist").append('<li><a href="#">'+opt+'</a></li>');
+								};
+
 							//populate the filter paramters
 							var filters_= [];
 							var field_map = {
@@ -185,7 +220,7 @@
 		$(document).on('click', "#xaxistype li a", function(){
 			$(this).parents("#xaxistype").find('.btn').html($(this).text() + ' <span class="caret"></span>');
 			$(this).parents("#xaxistype").find('.btn').val($(this).data('value'));
-			var xaxis = $(this).text().trim();
+			//var xaxis = $(this).text().trim();
 		});
 
 
@@ -193,25 +228,45 @@
 		$(document).on('click', "#yaxistype li a", function(){
 			$(this).parents("#yaxistype").find('.btn').html($(this).text() + ' <span class="caret"></span>');
 			$(this).parents("#yaxistype").find('.btn').val($(this).data('value'));
-			var yaxis = $(this).text().trim();
+			//var yaxis = $(this).text().trim();
 		});
 		
+		// handling zaxis dropdown
+		$(document).on('click', "#zaxistype li a", function(){
+			$(this).parents("#zaxistype").find('.btn').html($(this).text() + ' <span class="caret"></span>');
+			$(this).parents("#zaxistype").find('.btn').val($(this).data('value'));
+			//var zaxis = $(this).text().trim();
+		});
+
+		// handling graphtype dropdown
+		$(document).on('click', "#graphtype li a", function(){
+			$(this).parents("#graphtype").find('.btn').html($(this).text() + ' <span class="caret"></span>');
+			$(this).parents("#graphtype").find('.btn').val($(this).data('value'));
+			//var graphtype = $(this).text().trim();
+		});
+
 		// handling aggregation dropdown
 		$("#aggregationtype li a").click(function(){
 			$(this).parents("#aggregationtype").find('.btn').html($(this).text() + ' <span class="caret"></span>');
 			$(this).parents("#aggregationtype").find('.btn').val($(this).data('value'));
 			var aggregation_type = $(this).text().trim();
 			
-			/* handle columns based on aggregation
+			// handle graphtype based on aggregation
 			if (aggregation_type === "None") {
-				var columns_div = document.getElementById("columnslabel");
-				columns_div.innerHTML = "X axis, Yaxis:";
+				var list = $("#graphtypelist");
+				list.empty();
+				$("#graphtypelist").append('<li><a href="#">Line</a></li>');
+				$("#graphtypelist").append('<li><a href="#">Column</a></li>');
+				$("#graphtypelist").append('<li><a href="#">Bar</a></li>');
 			}
 			else {
-				var columns_div = document.getElementById("columnslabel");
-				columns_div.innerHTML = "Groupby Columns:";
+				var list = $("#graphtypelist");
+				list.empty();
+				$("#graphtypelist").append('<li><a href="#">StackedBar</a></li>');
+				$("#graphtypelist").append('<li><a href="#">ColumnChart</a></li>');
+				$("#graphtypelist").append('<li><a href="#">Pie</a></li>');
+				$("#graphtypelist").append('<li><a href="#">Bar</a></li>');
 			}
-			console.log(aggregation_type);*/
 		});
 
  /****************************************************************
@@ -239,6 +294,7 @@
 		var agg_type = $("#aggregationtype").find('.btn').text().trim();
 		var xaxiscolumn = $("#xaxistype").find('.btn').text().trim();
 		var yaxiscolumn = $("#yaxistype").find('.btn').text().trim();
+		var graph_type = $('#graphtype').find('.btn').text().trim();
 
 		if (agg_type=="None") {
 			
@@ -276,10 +332,10 @@
 							'yaxiscolumn': yaxiscolumn
 						},
 						success: function (highcharts_json) {
-								console.log(highcharts_json)
 								Highcharts.chart('container', {
 									chart: {
-										zoomType: 'x'
+										type: `${graph_type.toLowerCase()}`,
+										zoomType: 'x',
 									},
 									title: {
 										text: "Test"
