@@ -125,19 +125,21 @@
 						},
 
 						success: function (result) {
-							// populate the columns list
+
+							// populate the x axis list
 							var list = $("#xaxislist");
 							list.innerHTML="";
-							for (var i = 0; i < result.length; i++){                
-									var opt = result[i][0];
+							keys = Object.keys(result);
+							for (var i=0; i<keys.length; i++){  
+									var opt = keys[i];
 									$("#xaxislist").append('<li><a href="#">'+opt+'</a></li>');
 								};
 
 							// populate the y axis list
 							var list2 = $("#yaxislist");
 							list2.innerHTML="";
-							for (var i = 0; i < result.length; i++){                
-									var opt2 = result[i][0];
+							for (var i=0; i<keys.length; i++){  
+									var opt2 = keys[i];
 									$("#yaxislist").append('<li><a href="#">'+opt2+'</a></li>');
 								};
 							
@@ -150,9 +152,9 @@
 								'IntegerField': 'integer',
 								'DateTimeField': 'datetime',
 							}
-							for (var i = 0; i < result.length; i++){                
-									var col = result[i][0];
-									var col_type = field_map[result[i][1]];
+							for (var i=0; i<keys.length; i++){  
+									var col = keys[i];
+									var col_type = field_map[result[col]];
 									var filter_ = {
 										id: col,
 										label: col,
@@ -264,6 +266,8 @@
 							'csrfmiddlewaretoken': '{{ csrf_token }}',
 							'sql_query': final_query,
 							'agg_type': agg_type,
+							'xaxiscolumn': xaxiscolumn,
+							'yaxiscolumn': yaxiscolumn
 						},
 						success: function (result) {
 								console.log(result);

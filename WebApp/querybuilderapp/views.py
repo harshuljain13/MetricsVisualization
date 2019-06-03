@@ -8,6 +8,7 @@ import sqlite3
 import re
 import pandas as pd
 from django.db import connection
+import collections
 
 
 myapp = apps.get_app_config('querybuilderapp')
@@ -16,8 +17,10 @@ models_dict = myapp.models
 
 def get_model_fields(model):
     field_objs = model._meta.fields
-    fields = list(map(lambda x: (x.name, x.get_internal_type()), field_objs))
-    return fields
+    model_fields_map = collections.OrderedDict()
+    for field_obj in field_objs:
+        model_fields_map[field_obj.name]=field_obj.get_internal_type()
+    return model_fields_map
 
 # Create your views here.
 def home(request):
@@ -26,23 +29,34 @@ def home(request):
 def get_schema_details(request):
     model_str = request.POST.get('table_name', None)
     model_class = models_dict[model_str]
-    model_attr = get_model_fields(model_class)
-    return JsonResponse(model_attr, safe=False)
+    model_fields_map = get_model_fields(model_class)
+    return JsonResponse(model_fields_map, safe=False)
 
 def get_query_data(request):
     sql_query = request.POST.get('sql_query', None)
     agg_type = request.POST.get('agg_type', None)
     model_str = request.POST.get('table_name', None)
+    xaxis_column = request.POST.get('xaxiscolumn', None)
+    yaxis_column = request.POST.get('yaxiscolumn', None)
 
+    # get the table columns and their types
     model_class = models_dict[model_str]
-    model_attr = get_model_fields(model_class)
-    print(model_attr)
+    model_fields_map = get_model_fields(model_class)
+    print(model_fields_map)
 
-    print(model_class.objects.all())
-    #df = pd.read_sql_query(sql_query, connection)
+    data_df = pd.read_sql_query(sql_query, connection)
 
-    print(df)
+    valid_date_time_fields = ['DateField', 'TimeField', 'DateTimeField']
 
-    return JsonResponse(model_attr, safe=False)
+    if agg_type=='None':
+        #check datetime column
+        if model_fields_map[xaxis_column] in valid_date_time_fields:
+            data_df[xaxis_column] = pd.to_datetime(data_df[xaxis_column])
+        #convert dataframe to series
+        data_df = data_df.set_index(xaxis_column)
+
+    print(data_df)
+
+    return JsonResponse(model_fields_map, safe=False)
 
 
