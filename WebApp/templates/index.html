@@ -1,4 +1,3 @@
-{% load static %}
 <!DOCTYPE html>
 
 <head>
@@ -15,14 +14,13 @@
 
 	<style>
 		h1 { color: #111; font-size: 80px; font-family: 'Helvetica Neue', 'sans-serif'; font-weight: bold; letter-spacing: -1px; line-height: 1; text-align: center; }
-		#forkongithub a{background:green;color:#fff;text-decoration:none;font-family:inherit,sans-serif;text-align:center;font-weight:bold;padding:5px 40px;font-size:1rem;line-height:2rem;position:relative;transition:0.5s;}#forkongithub a:hover{background:#0b6623;color:#fff;}#forkongithub a::before,#forkongithub a::after{content:"";width:100%;display:block;position:absolute;top:1px;left:0;height:1px;background:#fff;}#forkongithub a::after{bottom:1px;top:auto;}@media screen and (min-width:800px){#forkongithub{position:absolute;display:block;top:0;right:0;width:200px;overflow:hidden;height:200px;z-index:9999;}#forkongithub a{width:200px;position:absolute;top:40px;right:-50px;transform:rotate(45deg);-webkit-transform:rotate(45deg);-ms-transform:rotate(45deg);-moz-transform:rotate(45deg);-o-transform:rotate(45deg);box-shadow:4px 4px 10px rgba(0,0,0,0.8);}}
+		
 	</style>
 		
 </head>
 
 <body>
-		<h1>Django-QueryBuilder</h1>
-		<span id="forkongithub"><a href="https://github.com/harshul1610/MetricsVisualization">Fork me on GitHub</a></span>
+		<h1>Flask-QueryBuilder</h1>
 		
 
 		<div style="padding-top: 50px; margin:50px;">
@@ -63,7 +61,7 @@
 
 							<!-- Table Columns -->
 							<div class="col-sm-2">
-								<label>X-Axis:</label>
+								<label>XAxis:</label>
 								<div id="xaxistype" class="dropdown">
 
 									<button class="btn btn-default dropdown-toggle" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
@@ -77,7 +75,7 @@
 
 							<!-- Table Columns -->
 							<div class="col-sm-2">
-								<label>Y-Axis:</label>
+								<label>YAxis:</label>
 								<div id="yaxistype" class="dropdown">
 									<button class="btn btn-default dropdown-toggle" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
 										Select Column
@@ -148,16 +146,14 @@
 
 					// ajax for getting the column names.
 					$.ajax({
-						url: 'getschemadetails',
+						url: '/getschemadetails',
 						type: "POST",
-						dataType: "json",
 						data: {
-							'table_name': table_name,
-							'csrfmiddlewaretoken': '{{ csrf_token }}'
+							'table_name': table_name
 						},
 
 						success: function (result) {
-
+                            console.log(result);
 							// populate the x axis list
 							var list = $("#xaxislist");
 							list.empty();
@@ -192,7 +188,9 @@
 								'FloatField': 'double',
 								'IntegerField': 'integer',
 								'DateTimeField': 'datetime',
+								'DateField':'date',
 							}
+
 							for (var i=0; i<keys.length; i++){  
 									var col = keys[i];
 									var col_type = field_map[result[col]];
@@ -262,10 +260,12 @@
 			else {
 				var list = $("#graphtypelist");
 				list.empty();
-				$("#graphtypelist").append('<li><a href="#">StackedBar</a></li>');
-				$("#graphtypelist").append('<li><a href="#">ColumnChart</a></li>');
-				$("#graphtypelist").append('<li><a href="#">Pie</a></li>');
+				$("#graphtypelist").append('<li><a href="#">Column</a></li>');
 				$("#graphtypelist").append('<li><a href="#">Bar</a></li>');
+				$("#graphtypelist").append('<li><a href="#">Pie</a></li>');
+                $("#graphtypelist").append('<li><a href="#">Stack Bar</a></li>');
+				$("#graphtypelist").append('<li><a href="#">Stack Column</a></li>');
+                
 			}
 		});
 
@@ -276,14 +276,6 @@
 	$('#btn-get').on('click', function() {
 	  var result = $('#builder').queryBuilder('getRules');
 		alert(JSON.stringify(result, null, 2));
-	  /*if (!$.isEmptyObject(result)) {
-	    alert(JSON.stringify(result, null, 2));
-	  }
-	  else{
-	  	console.log("invalid object :");
-	  }
-	  console.log(result);
-		*/
 	});
 
 	$('#btn-sql').on('click', function() {
@@ -294,24 +286,36 @@
 		var agg_type = $("#aggregationtype").find('.btn').text().trim();
 		var xaxiscolumn = $("#xaxistype").find('.btn').text().trim();
 		var yaxiscolumn = $("#yaxistype").find('.btn').text().trim();
+        var zaxiscolumn = $("#zaxistype").find('.btn').text().trim();
+        
 		var graph_type = $('#graphtype').find('.btn').text().trim();
 
 		if (agg_type=="None") {
 			
 
 			if (filter_query == '') {
-				var final_query = `select ${xaxiscolumn},${yaxiscolumn} from ${table_name}`;
+				var final_query = `select ${xaxiscolumn},${yaxiscolumn} from pint_own.${table_name}`;
 			}
 			else {
-				var final_query = `select ${xaxiscolumn},${yaxiscolumn} from ${table_name} where ${filter_query}`;
+				var final_query = `select ${xaxiscolumn},${yaxiscolumn} from pint_own.${table_name} where ${filter_query}`;
 			}
 		}
 		else {
 			if (filter_query == '') {
-				var final_query = `select ${xaxiscolumn},${agg_type}(${yaxiscolumn}) from ${table_name} group by ${yaxiscolumn}`;
+                if (zaxiscolumn=="None"){
+                    var final_query = `select ${xaxiscolumn},${agg_type}(${yaxiscolumn}) as ${yaxiscolumn} from pint_own.${table_name} group by ${xaxiscolumn}`;
+                }
+                else {
+                    var final_query = `select ${xaxiscolumn}, ${zaxiscolumn}, ${agg_type}(${yaxiscolumn}) as ${yaxiscolumn} from pint_own.${table_name} group by ${xaxiscolumn}, ${zaxiscolumn}`;
+                }
 			}
 			else {
-				var final_query = `select ${xaxiscolumn},${agg_type}(${yaxiscolumn}) from ${table_name} where ${filter_query} group by ${yaxiscolumn}`;
+                if (zaxiscolumn=="None"){
+                    var final_query = `select ${xaxiscolumn}, ${agg_type}(${yaxiscolumn}) as ${yaxiscolumn} from pint_own.${table_name} where ${filter_query} group by ${xaxiscolumn}`;
+                }
+                else {
+                    var final_query = `select ${xaxiscolumn},${zaxiscolumn},${agg_type}(${yaxiscolumn}) as ${yaxiscolumn} from pint_own.${table_name} where ${filter_query} group by ${xaxiscolumn},${zaxiscolumn}`;
+                }
 			}
 		}
 		
@@ -320,37 +324,66 @@
 
 		// call ajax
 		$.ajax({
-						url: 'get_query_data',
+						url: '/getquerydata',
 						type: "POST",
 						dataType: "json",
 						data: {
 							'table_name': table_name,
-							'csrfmiddlewaretoken': '{{ csrf_token }}',
+							//'csrfmiddlewaretoken': '{{ csrf_token }}',
 							'sql_query': final_query,
 							'agg_type': agg_type,
+                            'graph_type': graph_type,
 							'xaxiscolumn': xaxiscolumn,
-							'yaxiscolumn': yaxiscolumn
+							'yaxiscolumn': yaxiscolumn,
+							'zaxiscolumn': zaxiscolumn
 						},
 						success: function (highcharts_json) {
+                            
+                            var series = highcharts_json['series'];
+                            var categories = highcharts_json['categories'];
+                            var xaxistype = highcharts_json['xaxistype'];
+                            var xlabel = highcharts_json['xlabel'];
+                            var ylabel = highcharts_json['ylabel'];
+                            var stack_bool = highcharts_json['stacking'];
+                            var graph_type = highcharts_json['graph_type'];
+                            console.log(stack_bool);
+                            console.log(categories);
+                            console.log(series);
+                            console.log(graph_type);
+                            
+                            Highcharts.setOptions({
+                                 colors: ['#ff7c43', '#003f5c', '#58508d', '#ff6361', '#ffa600', '#FFF263']
+                                });
+                            
 								Highcharts.chart('container', {
 									chart: {
-										type: `${graph_type.toLowerCase()}`,
-										zoomType: 'x',
-									},
-									title: {
-										text: "Test"
+										type: graph_type,
+										zoomType: 'xy',
 									},
 									xAxis: {
-										type: "datetime",
-										title: {text: highcharts_json['xlabel']}
+										type: xaxistype,
+                                        categories: categories,
+										title: {text: xlabel}
 									},
 									yAxis: {
-										title: {text: highcharts_json['ylabel']}
+										title: {text: ylabel}
 									},
 									legend: {
-										enabled: false
-									},
+                                        align: 'right',
+                                        x: -30,
+                                        verticalAlign: 'top',
+                                        y: 25,
+                                        floating: true,
+                                        backgroundColor:
+                                            Highcharts.defaultOptions.legend.backgroundColor || 'white',
+                                        borderColor: '#CCC',
+                                        borderWidth: 1,
+                                        shadow: false
+                                    },
 									plotOptions: {
+                                        column:{
+                                            stacking: stack_bool
+                                        },
 										area: {
 											marker: {
 												radius:2
@@ -364,10 +397,7 @@
 											threshold:null
 										}
 									},
-									series:[{
-										name: 'test',
-										data: highcharts_json['data']
-									}]
+									series: series
 								});
 						}
 						
