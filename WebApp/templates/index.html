@@ -1,3 +1,5 @@
+
+    
 <!DOCTYPE html>
 
 <head>
@@ -20,9 +22,8 @@
 </head>
 
 <body>
-		<h1>Flask-QueryBuilder</h1>
+		<h1>Flask-QueryCharts</h1>
 		
-
 		<div style="padding-top: 50px; margin:50px;">
 				<!-- DB Table -->
 				<div class="row">
@@ -61,6 +62,7 @@
 
 							<!-- Table Columns -->
 							<div class="col-sm-2">
+                                
 								<label>XAxis:</label>
 								<div id="xaxistype" class="dropdown">
 
@@ -71,7 +73,27 @@
 										<ul id="xaxislist" class="dropdown-menu">
 										</ul>
 								</div>
+                                
+                                <div id="xagg" style="display:none;">
+                                    <label>X Aggregation:</label>
+                                    <div id="xaggtype" class="dropdown">
+
+                                        <button class="btn btn-default dropdown-toggle" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
+                                            Select Aggregation
+                                            <span class="caret"></span>
+                                            </button>
+                                            <ul id="xagglist" class="dropdown-menu">
+                                                <li><a href="#">None</a></li>
+                                                <li><a href="#">Daily</a></li>
+                                                <li><a href="#">Weekly</a></li>
+                                                <li><a href="#">Monthly</a></li>
+                                                <li><a href="#">Quaterly</a></li>
+                                            </ul>
+                                    </div>
+                                </div>
+                                
 							</div>
+                    
 
 							<!-- Table Columns -->
 							<div class="col-sm-2">
@@ -136,7 +158,7 @@
 
 		<script>
 
-	
+        var column_types = {};
 
 		// handling table dropdown
 		$("#dbtable li a").click(function(){
@@ -153,7 +175,8 @@
 						},
 
 						success: function (result) {
-                            console.log(result);
+                            column_types = result;
+                            
 							// populate the x axis list
 							var list = $("#xaxislist");
 							list.empty();
@@ -218,9 +241,22 @@
 		$(document).on('click', "#xaxistype li a", function(){
 			$(this).parents("#xaxistype").find('.btn').html($(this).text() + ' <span class="caret"></span>');
 			$(this).parents("#xaxistype").find('.btn').val($(this).data('value'));
-			//var xaxis = $(this).text().trim();
+			var xaxis = $(this).text().trim();
+            var xaxis_datatype = column_types[xaxis];
+            if (xaxis_datatype == "datetime" || xaxis_datatype=="date") {
+                $('#xagg').css('display', 'block');
+            }
+            else {
+                $('#xagg').css('display', 'None');
+            }
 		});
-
+        
+        // handling xagg dropdown
+		$(document).on('click', "#xaggtype li a", function(){
+			$(this).parents("#xaggtype").find('.btn').html($(this).text() + ' <span class="caret"></span>');
+			$(this).parents("#xaggtype").find('.btn').val($(this).data('value'));
+			//var xagg = $(this).text().trim();
+		});
 
 		// handling yaxis dropdown
 		$(document).on('click', "#yaxistype li a", function(){
@@ -260,6 +296,7 @@
 			else {
 				var list = $("#graphtypelist");
 				list.empty();
+                $("#graphtypelist").append('<li><a href="#">Line</a></li>');
 				$("#graphtypelist").append('<li><a href="#">Column</a></li>');
 				$("#graphtypelist").append('<li><a href="#">Bar</a></li>');
 				$("#graphtypelist").append('<li><a href="#">Pie</a></li>');
@@ -287,34 +324,34 @@
 		var xaxiscolumn = $("#xaxistype").find('.btn').text().trim();
 		var yaxiscolumn = $("#yaxistype").find('.btn').text().trim();
         var zaxiscolumn = $("#zaxistype").find('.btn').text().trim();
-        
+        var xagg_type = $("#xaggtype").find('.btn').text().trim();
 		var graph_type = $('#graphtype').find('.btn').text().trim();
 
 		if (agg_type=="None") {
 			
 
 			if (filter_query == '') {
-				var final_query = `select ${xaxiscolumn},${yaxiscolumn} from pint_own.${table_name}`;
+				var final_query = `select ${xaxiscolumn},${yaxiscolumn} from ${table_name}`;
 			}
 			else {
-				var final_query = `select ${xaxiscolumn},${yaxiscolumn} from pint_own.${table_name} where ${filter_query}`;
+				var final_query = `select ${xaxiscolumn},${yaxiscolumn} from ${table_name} where ${filter_query}`;
 			}
 		}
 		else {
 			if (filter_query == '') {
                 if (zaxiscolumn=="None"){
-                    var final_query = `select ${xaxiscolumn},${agg_type}(${yaxiscolumn}) as ${yaxiscolumn} from pint_own.${table_name} group by ${xaxiscolumn}`;
+                    var final_query = `select ${xaxiscolumn},${agg_type}(${yaxiscolumn}) as ${yaxiscolumn} from ${table_name} group by ${xaxiscolumn}`;
                 }
                 else {
-                    var final_query = `select ${xaxiscolumn}, ${zaxiscolumn}, ${agg_type}(${yaxiscolumn}) as ${yaxiscolumn} from pint_own.${table_name} group by ${xaxiscolumn}, ${zaxiscolumn}`;
+                    var final_query = `select ${xaxiscolumn}, ${zaxiscolumn}, ${agg_type}(${yaxiscolumn}) as ${yaxiscolumn} from ${table_name} group by ${xaxiscolumn}, ${zaxiscolumn}`;
                 }
 			}
 			else {
                 if (zaxiscolumn=="None"){
-                    var final_query = `select ${xaxiscolumn}, ${agg_type}(${yaxiscolumn}) as ${yaxiscolumn} from pint_own.${table_name} where ${filter_query} group by ${xaxiscolumn}`;
+                    var final_query = `select ${xaxiscolumn}, ${agg_type}(${yaxiscolumn}) as ${yaxiscolumn} from ${table_name} where ${filter_query} group by ${xaxiscolumn}`;
                 }
                 else {
-                    var final_query = `select ${xaxiscolumn},${zaxiscolumn},${agg_type}(${yaxiscolumn}) as ${yaxiscolumn} from pint_own.${table_name} where ${filter_query} group by ${xaxiscolumn},${zaxiscolumn}`;
+                    var final_query = `select ${xaxiscolumn},${zaxiscolumn},${agg_type}(${yaxiscolumn}) as ${yaxiscolumn} from ${table_name} where ${filter_query} group by ${xaxiscolumn},${zaxiscolumn}`;
                 }
 			}
 		}
@@ -332,6 +369,7 @@
 							//'csrfmiddlewaretoken': '{{ csrf_token }}',
 							'sql_query': final_query,
 							'agg_type': agg_type,
+                            'xagg_type': xagg_type,
                             'graph_type': graph_type,
 							'xaxiscolumn': xaxiscolumn,
 							'yaxiscolumn': yaxiscolumn,
@@ -346,10 +384,20 @@
                             var ylabel = highcharts_json['ylabel'];
                             var stack_bool = highcharts_json['stacking'];
                             var graph_type = highcharts_json['graph_type'];
-                            console.log(stack_bool);
-                            console.log(categories);
-                            console.log(series);
-                            console.log(graph_type);
+                            
+                            if (categories.length>0) {
+                                var xaxis_dict = {
+                                    type:xaxistype,
+                                    categories: categories,
+                                    title: {text: xlabel}
+                                }
+                            }
+                            else {
+                                var xaxis_dict = {
+                                    type:xaxistype,
+                                    title: {text: xlabel}
+                                }
+                            }
                             
                             Highcharts.setOptions({
                                  colors: ['#ff7c43', '#003f5c', '#58508d', '#ff6361', '#ffa600', '#FFF263']
@@ -360,11 +408,7 @@
 										type: graph_type,
 										zoomType: 'xy',
 									},
-									xAxis: {
-										type: xaxistype,
-                                        categories: categories,
-										title: {text: xlabel}
-									},
+									xAxis: xaxis_dict,
 									yAxis: {
 										title: {text: ylabel}
 									},
