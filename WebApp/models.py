@@ -1,28 +1,22 @@
 from resource import db
 
 
-class eod_hd(db.Model):
+class reliance(db.Model):
     '''
-    model for eod_hd
+    model for reliance
     '''
     #__table_args__ = {'schema':'pint_own'}
-    __tablename__ = 'eod_hd'
-    __columnsmap__ = {'id': 'float', 'open': 'float', 'high':'float',
-                      'low':'float','close':'float','volume':'float',
-                      'dividend':'float','split':'float','adjopen':'float',
-                      'adjhigh':'float', 'adjlow':'float', 'adjclose':'float',
-                      'adjvolume':'float', 'date':'date'}
+    __tablename__ = 'reliance'
+    __columnsmap__ = {'id': 'float', 'date': 'datetime', 'open_price': 'float', 'high_price':'float',
+                      'low_price':'float','last_traded_price':'float','close_price':'float',
+                      'total_traded_quantity':'float', 'turnover':'float'}
     id = db.Column('id', db.Integer(), primary_key=True)
-    Open = db.Column('Open', db.Float())
-    High = db.column('High', db.Float())
-    Low = db.Column('Low', db.Float())
-    Close = db.Column('Close', db.Float())
-    Volume = db.Column('Volume', db.Float())
-    Dividend = db.column('Dividend', db.Float())
-    Split = db.Column('Split', db.Float())
-    AdjOpen = db.Column('AdjOpen', db.Float())
-    AdjHigh = db.Column('AdjHigh', db.Float())
-    AdjLow = db.Column('AdjLow', db.Float())
-    AdjClose = db.Column('AdjClose', db.Float())
-    AdjVolume = db.Column('Adjvolume', db.Float())
-    Date = db.Column('Date', db.Date())
+    date = db.Column('date', db.Date())
+    open_price = db.Column('open_price', db.Float())
+    high_price = db.column('high_price', db.Float())
+    low = db.Column('low_price', db.Float())
+    last_traded_price = db.Column('last_traded_price', db.Float())
+    close_price = db.Column('close_price', db.Float())
+    total_traded_quantity = db.Column('total_traded_quantity', db.Float())
+    turnover = db.column('turnover', db.Float())
+    

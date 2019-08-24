@@ -97,7 +97,7 @@ def get_query_data():
         value_list  = data_df[yaxis_column].tolist()
 
         if model_fields_map[xaxis_column] in valid_date_time_fields:
-            data = [[float(key),float(value)] for key,value in zip(index_list, value_list)]
+            data = [[float(datetime.datetime.strftime(key, '%s'))*1000,float(value)] for key,value in zip(index_list, value_list)]
             data = sorted(data, key=lambda x: x[0])
             categories = []
         else:
@@ -120,7 +120,8 @@ def get_query_data():
             value_list  = data_df[yaxis_column].tolist()
 
             if model_fields_map[xaxis_column] in valid_date_time_fields:
-                data = [[float(key),float(value)] for key,value in zip(index_list, value_list)]
+                print(index_list)
+                data = [[float(datetime.datetime.strftime(key, '%s'))*1000,float(value)] for key,value in zip(index_list, value_list)]
                 data = sorted(data, key=lambda x: x[0])
                 categories = []
             else:
