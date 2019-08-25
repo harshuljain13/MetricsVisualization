@@ -10,6 +10,12 @@ Metrics Visualization Tool
 ## Instructions to setup
 
 ```
-CREATE TABLE reliance (id int not null primary key, date Date, open_price float, high_price float, low_price float, last_traded_price float, Close float, total_traded_quantity float, turnover float);
+1. virualenv venv
+2. source venv/bin/activate
+3. pip install -r requirements.txt
+4. cd WebApp
+5. python resource.py
+6. sqlite3 db.sqlite3
+7. CREATE TABLE reliance (id int not null primary key, date Date, open_price float, high_price float, low_price float, last_traded_price float, Close float, total_traded_quantity float, turnover float);
+8. run notebook in data directory to dump data in database
 ```
-run notebook in data directory
