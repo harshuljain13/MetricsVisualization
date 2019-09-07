@@ -11,147 +11,246 @@
 	<script src="https://code.highcharts.com/modules/export-data.js"></script>
 
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/jquery.query-builder/2.3.3/css/query-builder.default.min.css">
-	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.0/css/bootstrap.min.css">
+	<!--
+	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+
+	-->
+	<link href="https://fonts.googleapis.com/css?family=Lato&display=swap" rel="stylesheet">
+	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.0/css/bootstrap.min.css">		
+
+	
+	<style>
+		/* Custom CSS */
+		.mt {
+			margin-top: 30px;
+		}
+		body {
+			font-family: 'Lato', sans-serif !important;
+		}
+		.top-hero {
+			position: relative;
+			height: 250px;
+			width: 100%;
+			background: #3700b3;
+			padding: 20px 0;
+		}
+		#querybuilderbuttons {
+			height: 50px;
+		}
+		#container {
+			width: 100%;
+			box-shadow: 0px 0px 5px 3px rgba(0,0,0,0.2);
+			border-radius: 8px;
+			text-align: center;
+			background: #f1f1f1;
+    		margin-top: 10px !important;
+		}
+		.tweakers {
+			position: absolute;
+			width: 93%;
+			margin: auto;
+			top: 125px;
+			background: #fff;
+			left: 0;
+			right: 0;
+			box-shadow: 0px 0px 5px 3px rgba(0,0,0,0.2);
+			color: #313131;
+			height: 320px;
+			border-radius: 8px;
+			text-align: center;
+    		padding: 0 10px;
+		}
+		.hero {
+			position: relative;
+			height: 350px;
+			width: 100%;
+			text-align: center;
+		}
+		.header {			
+			margin-top: 0;
+			font-size: 35px;			
+    		color: #fff;
+		}
+		.white {
+    		color: #f2f2f2;
+    		font-size: 16px;
+		}
+		.nodata {
+			margin: auto;
+			padding: 10px;
+			margin: 10px;
+			width: 15%;
+			height: auto;
+			position: relative;
+			left: auto;
+			right: auto;
+    		margin-top: 50px;
+
+		}
+		.block{
+			display: block;
+			height: 50px;
+			padding: 10px 0;
+		}
+	</style>
 	<title>QueryBuilder</title>
 
 	<style>
 		h1 { color: #111; font-size: 80px; font-family: 'Helvetica Neue', 'sans-serif'; font-weight: bold; letter-spacing: -1px; line-height: 1; text-align: center; }
-		
 	</style>
 		
 </head>
 
 <body>
-		<h1>Flask-QueryCharts</h1>
-		
-		<div style="padding-top: 50px; margin:50px;">
-				<!-- DB Table -->
-				<div class="row">
-							<div class="col-sm-2">
-									<label>Table: </label>
-									<div id="dbtable" class="dropdown">
-											
-											<button class="btn btn-default dropdown-toggle" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
-												Select Table
-											<span class="caret"></span>
-											</button>
-											<ul class="dropdown-menu" aria-labelledby="dbtable">
-												{% for table in tables %}
-												<li><a href="#">{{table}}</a></li>
-												{% endfor %}
-											</ul>
-									</div>
-							</div>
+		<div class="hero">
 
-							<div class="col-sm-2">
-								<!-- Aggregation input -->
-								<label>Aggregation: </label>
-								<div id="aggregationtype" class="dropdown">
+				<div class="top-hero">
+						<h3 class="header">Metrics Visualization</h3>
+						<p class="white">Visualize Metrics With Us</p>
+
+
+					</div>
+					<div class="tweakers">
+						<div class="row">
+								<div class="col-sm-2 mt">
+										<label>Table: </label>
+										<div id="dbtable" class="dropdown">
 												
-									<button class="btn btn-default dropdown-toggle" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
-												Select Aggregation
+												<button class="btn btn-default dropdown-toggle" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
+													Select Table
 												<span class="caret"></span>
 												</button>
-												<ul class="dropdown-menu" aria-labelledby="aggregationtype">
-													<li><a href="#">None</a></li>
-													<li><a href="#">Sum</a></li>
-													<li><a href="#">Count</a></li>
+												<ul class="dropdown-menu" aria-labelledby="dbtable">
+													{% for table in tables %}
+													<li><a href="#">{{table}}</a></li>
+													{% endfor %}
 												</ul>
+										</div>
 								</div>
-							</div>
-
-							<!-- Table Columns -->
-							<div class="col-sm-2">
-                                
-								<label>XAxis:</label>
-								<div id="xaxistype" class="dropdown">
-
-									<button class="btn btn-default dropdown-toggle" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
-										Select Column
-										<span class="caret"></span>
-										</button>
-										<ul id="xaxislist" class="dropdown-menu">
-										</ul>
+	
+								<div class="col-sm-2 mt">
+									<!-- Aggregation input -->
+									<label>Aggregation: </label>
+									<div id="aggregationtype" class="dropdown">
+													
+										<button class="btn btn-default dropdown-toggle" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
+													Select Aggregation
+													<span class="caret"></span>
+													</button>
+													<ul class="dropdown-menu" aria-labelledby="aggregationtype">
+														<li><a href="#">None</a></li>
+														<li><a href="#">Sum</a></li>
+														<li><a href="#">Count</a></li>
+														<li><a href="#">Avg</a></li>
+													</ul>
+									</div>
 								</div>
-                                
-                                <div id="xagg" style="display:none;">
-                                    <label>X Aggregation:</label>
-                                    <div id="xaggtype" class="dropdown">
-
-                                        <button class="btn btn-default dropdown-toggle" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
-                                            Select Aggregation
-                                            <span class="caret"></span>
-                                            </button>
-                                            <ul id="xagglist" class="dropdown-menu">
-                                                <li><a href="#">None</a></li>
-                                                <li><a href="#">Daily</a></li>
-                                                <li><a href="#">Weekly</a></li>
-                                                <li><a href="#">Monthly</a></li>
-                                                <li><a href="#">Quaterly</a></li>
-                                            </ul>
-                                    </div>
-                                </div>
-                                
-							</div>
-                    
-
-							<!-- Table Columns -->
-							<div class="col-sm-2">
-								<label>YAxis:</label>
-								<div id="yaxistype" class="dropdown">
-									<button class="btn btn-default dropdown-toggle" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
-										Select Column
-										<span class="caret"></span>
-										</button>
-										<ul id="yaxislist" class="dropdown-menu">
-										</ul>
-								</div>
-							</div>
-							
-							<!-- Table Columns -->
-							<div class="col-sm-2">
-									<label>Z-Axis:</label>
-									<div id="zaxistype" class="dropdown">
+	
+								<!-- Table Columns -->
+								<div class="col-sm-2 mt">
+									
+									<label>XAxis:</label>
+									<div id="xaxistype" class="dropdown">
+	
 										<button class="btn btn-default dropdown-toggle" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
 											Select Column
 											<span class="caret"></span>
 											</button>
-											<ul id="zaxislist" class="dropdown-menu">
+											<ul id="xaxislist" class="dropdown-menu">
 											</ul>
 									</div>
-							</div>
+																		
+									
+								</div>
+								
+								<div class="col-sm-2 mt">
 
-							<!-- Graph Type -->
-							<div class="col-sm-2">
-									<label>GraphType: </label>
-									<div id="graphtype" class="dropdown">
+										<label>X Aggregation:</label>
+										<div id="xagg">
+												<div id="xaggtype" class="dropdown">
+			
+													<button class="btn btn-default dropdown-toggle" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
+														Select Aggregation
+														<span class="caret"></span>
+														</button>
+														<ul id="xagglist" class="dropdown-menu">
+															<li><a href="#">None</a></li>
+															<li><a href="#">Daily</a></li>
+															<li><a href="#">Weekly</a></li>
+															<li><a href="#">Monthly</a></li>
+															<li><a href="#">Quaterly</a></li>
+														</ul>
+												</div>
+											</div>
+								</div>
+						
+	
+								<!-- Table Columns -->
+								<div class="col-sm-2 mt">
+									<label>YAxis:</label>
+									<div id="yaxistype" class="dropdown">
 										<button class="btn btn-default dropdown-toggle" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
-											Select Graph
+											Select Column
 											<span class="caret"></span>
-										</button>
-										<ul id="graphtypelist" class="dropdown-menu" aria-labelledby="aggregationtype">
-										</ul>
+											</button>
+											<ul id="yaxislist" class="dropdown-menu">
+											</ul>
 									</div>
+								</div>
+								
+								<!-- Table Columns -->
+								<div class="col-sm-2 mt">
+										<label>Z-Axis:</label>
+										<div id="zaxistype" class="dropdown">
+											<button class="btn btn-default dropdown-toggle" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
+												Select Column
+												<span class="caret"></span>
+												</button>
+												<ul id="zaxislist" class="dropdown-menu">
+												</ul>
+										</div>
+								</div>
+	
+								<!-- Graph Type -->
+								<div class="col-sm-2 mt">
+										<label>GraphType: </label>
+										<div id="graphtype" class="dropdown">
+											<button class="btn btn-default dropdown-toggle" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
+												Select Graph
+												<span class="caret"></span>
+											</button>
+											<ul id="graphtypelist" class="dropdown-menu" aria-labelledby="aggregationtype">
+											</ul>
+										</div>
+								</div>
+						</div>
+						<div class="row">
+								<div class="col">
+									<div style="margin: 15px;" id="builder"></div>
+								</div>
+							</div>
+		
+							<div id="querybuilderbuttons" class="row">
+								  <div class="block">
+										<!--<button class="btn btn-success" id="btn-set">Set Rules</button>-->
+										<!--<button class="btn btn-primary" id="btn-get">Get Rules</button>-->
+										<button class="btn btn-warning" id="btn-reset">Reset</button>
+										<button class="btn btn-success" id="btn-sql">Generate Graph</button>
+								  </div>
 							</div>
 					</div>
 
-					<div class="row">
-						<div class="col">
-							<div style="margin: 15px;" id="builder"></div>
-						</div>
-					</div>
+		</div>
+		<div style="padding-top: 50px; margin:50px;">
+				<!-- DB Table -->
+				
 
-					<div id="querybuilderbuttons" style="display:none;" class="row">
-						  <div style="margin-left:15px">
-								<!--<button class="btn btn-success" id="btn-set">Set Rules</button>-->
-								<!--<button class="btn btn-primary" id="btn-get">Get Rules</button>-->
-								<button class="btn btn-warning" id="btn-reset">Reset</button>
-								<button class="btn btn-success" id="btn-sql">Generate Graph</button>
-						  </div>
-					</div>
+					
 					
 					<div id="container" style="min-width: 310px; height: 400px; margin: 0 auto">
 					<!-- chart -->
+						<img class="nodata" src="https://i.imgur.com/OQ74k5S.png" />
+						<h3>No Data</h3>
 					</div>
 
 				</div>
@@ -207,11 +306,11 @@
 							var filters_= [];
 							var field_map = {
 								'AutoField': 'integer',
-								'TextField': 'string',
-								'FloatField': 'double',
-								'IntegerField': 'integer',
-								'DateTimeField': 'datetime',
-								'DateField':'date',
+								'string': 'string',
+								'float': 'double',
+								'integer': 'integer',
+								'datetime': 'datetime',
+								'date':'date',
 							}
 
 							for (var i=0; i<keys.length; i++){  
@@ -382,6 +481,7 @@
                             var xaxistype = highcharts_json['xaxistype'];
                             var xlabel = highcharts_json['xlabel'];
                             var ylabel = highcharts_json['ylabel'];
+							var xagg_type = highcharts_json['xagg_type'];
                             var stack_bool = highcharts_json['stacking'];
                             var graph_type = highcharts_json['graph_type'];
                             
@@ -389,6 +489,7 @@
                                 var xaxis_dict = {
                                     type:xaxistype,
                                     categories: categories,
+
                                     title: {text: xlabel}
                                 }
                             }
