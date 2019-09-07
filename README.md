@@ -22,5 +22,7 @@ Metrics Visualization Tool
 ![image](https://github.com/harshul1610/MetricsVisualization/blob/master/images/Visualization.png)
 
 ## Author
+```
 Harshul Jain
 Rishi Raj
+```
