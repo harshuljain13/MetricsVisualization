@@ -12,7 +12,7 @@ from flask import Flask
 
 
 app = Flask(__name__)
-app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///db.sqlite3'
+app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql://localhost:5432/kevin'
 db = SQLAlchemy(app)
 
 from models import *

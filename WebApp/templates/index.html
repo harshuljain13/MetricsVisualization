@@ -243,6 +243,7 @@
 					</div>
 
 		</div>
+		
 		<div class="row" style="padding-top: 10px; margin:150px;">
 				<!-- DB Table -->
 					<div id="container" style="min-width: 310px; height: 400px; margin: 0 auto">
@@ -251,7 +252,7 @@
 						<h3>No Data</h3>
 					</div>
 		</div>
-
+		
 		<script>
 
         var column_types = {};
@@ -416,6 +417,7 @@
 		
 		// construct sql
 		var table_name = $("#dbtable").find('.btn').text().trim();
+		var new_table_name = table_name.replace('__','.');
 		var agg_type = $("#aggregationtype").find('.btn').text().trim();
 		var xaxiscolumn = $("#xaxistype").find('.btn').text().trim();
 		var yaxiscolumn = $("#yaxistype").find('.btn').text().trim();
@@ -427,27 +429,27 @@
 			
 
 			if (filter_query == '') {
-				var final_query = `select ${xaxiscolumn},${yaxiscolumn} from ${table_name}`;
+				var final_query = `select ${xaxiscolumn},${yaxiscolumn} from ${new_table_name}`;
 			}
 			else {
-				var final_query = `select ${xaxiscolumn},${yaxiscolumn} from ${table_name} where ${filter_query}`;
+				var final_query = `select ${xaxiscolumn},${yaxiscolumn} from ${new_table_name} where ${filter_query}`;
 			}
 		}
 		else {
 			if (filter_query == '') {
                 if (zaxiscolumn=="None"){
-                    var final_query = `select ${xaxiscolumn},${agg_type}(${yaxiscolumn}) as ${yaxiscolumn} from ${table_name} group by ${xaxiscolumn}`;
+                    var final_query = `select ${xaxiscolumn},${agg_type}(${yaxiscolumn}) as ${yaxiscolumn} from ${new_table_name} group by ${xaxiscolumn}`;
                 }
                 else {
-                    var final_query = `select ${xaxiscolumn}, ${zaxiscolumn}, ${agg_type}(${yaxiscolumn}) as ${yaxiscolumn} from ${table_name} group by ${xaxiscolumn}, ${zaxiscolumn}`;
+                    var final_query = `select ${xaxiscolumn}, ${zaxiscolumn}, ${agg_type}(${yaxiscolumn}) as ${yaxiscolumn} from ${new_table_name} group by ${xaxiscolumn}, ${zaxiscolumn}`;
                 }
 			}
 			else {
                 if (zaxiscolumn=="None"){
-                    var final_query = `select ${xaxiscolumn}, ${agg_type}(${yaxiscolumn}) as ${yaxiscolumn} from ${table_name} where ${filter_query} group by ${xaxiscolumn}`;
+                    var final_query = `select ${xaxiscolumn}, ${agg_type}(${yaxiscolumn}) as ${yaxiscolumn} from ${new_table_name} where ${filter_query} group by ${xaxiscolumn}`;
                 }
                 else {
-                    var final_query = `select ${xaxiscolumn},${zaxiscolumn},${agg_type}(${yaxiscolumn}) as ${yaxiscolumn} from ${table_name} where ${filter_query} group by ${xaxiscolumn},${zaxiscolumn}`;
+                    var final_query = `select ${xaxiscolumn},${zaxiscolumn},${agg_type}(${yaxiscolumn}) as ${yaxiscolumn} from ${new_table_name} where ${filter_query} group by ${xaxiscolumn},${zaxiscolumn}`;
                 }
 			}
 		}
